@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<style>
+
+a {
+    text-decoration: none;
+    display: inline-block;
+}
+
+a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+table {
+    font-family: arial, sans-serif;
+    font-size: 120%;
+    border-collapse: collapse;
+    width: 900px;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #fbf9f9;
+}
+</style>
+<body>
+<div align="center">
+<div class="cdiv" >
+    <a href="/" style="padding: 8px 16px;"> 手写汉字识别</a>
+    <a href="/input" style="padding: 8px 16px;"> 查书法</a>
+    <a onclick="goBack()" style="padding: 8px 16px;">返回</a>
+    <a onclick="goForward()" style="padding: 8px 16px;">继续</a>
+</div>
+
+<br>
+<div class="cdiv" >
+<table>
+    <tr>
+        <th>文件名</th>
+        <th>图片</th>
+        <th>识别汉字</th>
+        <th>识别书写人</th>
+        <th>拼音</th>
+    </tr>
+    <tr>
+        <td>{{filename}}</td>
+        <td> <img src="{{ url_for('static',filename='uploads/'+filename) }}" height="200" width="200" alt=""></td>
+        <td>
+        <form id="_form" action="{{ url_for('word_list')}}" method="post"">
+            <input type="hidden" name="word" value="{{word}}" /> 
+            <a style="color: blue;cursor:pointer;" onclick="document.getElementById('_form').submit();">{{word}}</a>
+          </form>
+        </td>
+        <td><form id="writer_form" action="{{ url_for('writer_list')}}" method="post"">
+            <input type="hidden" name="writer" value="{{writer}}" /> 
+            <a style="color: blue;cursor:pointer;" onclick="document.getElementById('writer_form').submit();">{{writer}}</a>
+          </form>
+        </td>                                                                                               
+        <td>{{pinyin}}</td>
+    </tr>
+</table>
+</div>
+</div>
+</body>
+<script>
+function goBack() {
+    window.history.back();
+}
+function goForward() {
+    window.history.forward();
+}
+</script>
+</html>

@@ -1,0 +1,129 @@
+blockquote,body,fieldset,form,h1,h2,h3,h4,h5,h6,html,input,li,ol,p,pre,ul{margin:0;padding:0}
+ul{list-style:none}
+.clear{clear:both}
+hr{height:1px;border:none;border-top:1px solid #BBB}
+body{margin:0;padding:0;font-family:Verdana,Arial,Helvetica,sans-serif;background:#fcfdfe;color:#545454}
+.entry table{font-size:12px;outline-color:#D1DDDF;outline-width:thin;outline-style:dotted;border-collapse:collapse}
+.entry td{line-height:30px}
+#body input[type=text],#body select,#body textarea,#body.short{background-color:#f4f9fb;}
+#page{width:1000px;margin:0 auto}
+#header{width:100%;height:119px;overflow:hidden}
+#header_banner{float:right;padding:15px 26px 0 0}
+#header #logo{color:#000;font-size:55px;font-weight:400;letter-spacing:-6px;padding:18px 0 0 25px;float:left}
+#header #logo a{color:#000}
+#header #logo a:hover{text-decoration:none}
+#header #logo .description{font-size:17px;position:relative;top:-5px;display:block;letter-spacing:0;text-align:center}
+#menu{width:960px;height:46px;background:url(https://img.supfree.net/i/bgr_menu.png) no-repeat;margin:0 0 0 20px}
+#main_search{float:right;padding-right:8px}
+#mainmenu{float:left;padding:5px 0 0 5px}
+#mainmenu ul{margin:0;padding:0;list-style-type:none;z-index:1000}
+#mainmenu ul li{position:relative;display:inline;float:left;z-index:1000;color:#fff;padding:0 0 0 16px;font-size:13px;background:url(https://img.supfree.net/i//bgr_menu_li.gif) no-repeat left center;text-transform:uppercase}
+#mainmenu ul li.first{padding:0;background:0 0}
+#mainmenu ul li a{display:block;color:#fff;z-index:1000;padding:5px 10px 5px 10px}
+#mainmenu ul li{display:block;color:#fff;z-index:1000;padding:5px 10px 5px 10px;font-size:14px}
+* html #mainmenu ul li a{display:inline-block;float:left}
+* html #mainmenu ul li ul li a{float:none}
+#mainmenu .current_page_item a,#mainmenu .select a,#mainmenu ul li a:hover{text-decoration:none}
+#mainmenu ul li ul{position:absolute;left:0;display:block;visibility:hidden;margin:0 0 0 17px}
+#mainmenu ul li ul li{display:list-item;float:none;font-size:1em;background:0 0;padding:0}
+#mainmenu ul li ul li ul{top:0;margin:0}
+#mainmenu ul li ul li a,#mainmenu ul li.current_page_item ul a,#mainmenu ul li.select ul a{width:160px;height:auto;padding:7px 5px 7px 10px;margin:0;border-bottom:1px solid #676767;background:#1f1f1f;border-top-width:0;text-align:left;text-decoration:none;color:#999;font-size:13px;text-transform:capitalize}
+#searchform_top{padding:9px 0 0 0}
+#searchform_top_text{width:150px;padding:9px 6px 4px 6px;color:#4c4c4c;font-size:12px;float:left;border:0;margin:0 8px 0 0;background:#fff}
+#gosearch{float:left}
+#body{width:100%;background:url(https://img.supfree.net/i/bgr_body.gif) repeat-y right;overflow:hidden}
+#body_top{width:100%;background:url(https://img.supfree.net/i/bgr_body_top.png) no-repeat}
+#body_end{width:100%;background:url(https://img.supfree.net/i/bgr_body_end.png) no-repeat left bottom;overflow:hidden;padding:0 0 105px 0}
+#body_left{width:790px;float:left}
+#body_right{float:left;width:160px;margin-top:30px}
+#body_left_content{width:728px;margin:10px 0 0 40px}
+.post{width:100%;margin:0 0 40px 0}
+.post-top{width:100%;padding:0 0 15px 0;border-bottom:1px solid #b6c1c2;overflow:hidden}
+.post-title{width:728px;float:left;margin:10px 0 10px 0}
+.post-title h2{font-size:29px;margin:0 0 5px 0;color:#333;font-weight:700}
+.post-title img{vertical-align:middle}
+.post-title h2 a{color:#000}
+.post-top h4{width:84px;height:49px;padding:14px 0 0 0;color:#cdcdcd;text-align:center;font-weight:400;font-size:25px;float:right;background:url(https://img.supfree.net/i/bgr_post_comment.png) no-repeat}
+.post-top h3{font-weight:400;color:#7b7b7b;font-size:12px;margin:0 0 0 2px}
+.post-top h3 a,.post-top h3 span{color:#f7941d;font-weight:700;text-transform:capitalize}
+.post-top h3 .post_cats,.post-top h3 .post_cats a{color:#000;font-weight:400}
+.entry{line-height:20px;font-size:13px;margin:10px 0 0 0;min-height:300px;height:auto!important;height:300px}
+.icoitem{width:98px;height:115px;text-align:center;overflow:hidden}
+.ico{margin:12px 19px 0 19px;text-align:center;height:42px;CURSOR:pointer}
+.item{margin:7px 0 0 0;text-align:center;font-weight:500;font-size:14px;width:98px;CURSOR:pointer}
+.icoitem a:hover{color:#00F;font-weight:800;text-decoration:none}
+.entrys h3{font-size:18px;margin:0;color:#000;font-weight:700;border-bottom:1px solid #aababe;padding:10px 0 0 5px;margin:0;clear:both}
+.entrys ul{clear:both;margin:10px 0 0 0}
+.entrys li{float:left;margin:0 5px 0 0}
+.entry .banner{padding:0 0 10px 0}
+.entry .banner img{border:0}
+.entry .banner_left img{border:0}
+.entry p{padding-bottom:10px}
+#footer{width:100%;height:30px}
+#footer_text{padding:5px 0 0 0;width:945px;font-size:12px;margin:0 auto;line-height:1.6}
+#footer_text p{color:#000;padding:0 0 8px 0;font-size:12px}
+#footer_text a{color:#006DB7}
+.ctable{border-collapse:collapse;margin:10px 0 10px 0}
+.ctable td{border:1px solid #BBB;font-size:14px;line-height:1.5;padding:5px;color:#333}
+.xctd{background:#BBDEE4}
+.cstable{border-collapse:collapse;margin:10px 0 10px 0}
+.cstable td{border:1px solid #BBB;font-size:13px;line-height:1.5;padding:5px;color:#333}
+.cwtable{border-collapse:collapse;margin:10px 0 10px 0}
+.cwtable td{border:1px solid #BBB;font-size:12px;line-height:1.5;padding:5px;color:#333}
+.cinput{border:1px solid #BBB;color:#7E7E7E;height:30px;outline-color:-moz-use-text-color;outline-style:none;outline-width:0;line-height:30px;font-size:16px}
+.cp{font-size:14px;color:#333;line-height:1.5;width:660px;word-break:break-all;margin-bottom:-10px}
+.csearch{height:45px;line-height:45px}
+.csearch input{vertical-align:middle}
+.cdiv{font-size:14px;padding:10px 10px 10px 10px;border:1px solid #BBB;width:680px;line-height:2;color:#333;margin-bottom:10px;table-layout:fixed;word-wrap:break-word}
+.cselect{font-size:16px}
+.clink a{color:#666;margin-right:10px}
+.cimg{border:#ccc 1px solid}
+.bblue{color:#006DB7}
+.bred{color:#C00}
+.bgreen{color:green}
+.bgray{color:#AAA}
+.botitle18{font-size:18px;font-weight:700;margin-bottom:5px}
+.botitle16{font-size:16px;font-weight:700;margin-bottom:5px}
+.botitle14{font-size:14px;font-weight:700;margin-bottom:5px}
+.oul li{display:block;float:left;height:30px;line-height:30px;overflow:hidden;padding:0 0 0 3px;font-size:14px;width:130px!important;margin:0}
+.ouls li{display:block;float:left;height:30px;line-height:30px;overflow:hidden;padding:0 0 0 3px;font-size:13px;width:79px!important;margin:0}
+.oulm li{display:block;float:left;height:25px;line-height:25px;overflow:hidden;padding:0 0 0 3px;font-size:14px;width:325px!important;margin:0}
+p img{padding:0;max-width:100%}
+.tlink14 a{font-size:14px}
+.tlink14{font-size:14px}
+.tlink13 a{font-size:13px}
+.tlink13{font-size:13px}
+.tlink12 a{font-size:12px}
+.tlink12{font-size:12px}
+.tlink18 a{font-size:18px}
+.tlink18{font-size:18px}
+.ulon{display:-moz-inline-box;display:inline-block;width:30px}
+.ul12 li{font-size:12px}
+.ul13 li{font-size:13px}
+.ul14 li{font-size:14px}
+.center{text-align:center}
+a img{border:none}
+select{width:130px}
+#commentform{width:400px}
+#commentform input{width:170px;padding:2px;margin:5px 5px 1px 0}
+#commentform textarea{width:350px;padding:2px}
+#commentform #submit{margin:5px 0 0 0;padding:0;width:73px;height:30px}
+.joketitle{font-size:16px;color:#666;line-height:2;font-weight:700}
+.jokecontent{font-size:14px;color:#666;line-height:1.5;padding:10px 0 10px 0}
+#respond{width:728;margin:40px 0 0 0}
+h3#respond_title{width:728;font-size:20px;margin:0 0 5px 0;color:#000;font-weight:400;border-bottom:1px solid #aababe;padding:0 0 10px 5px;margin:0 0 20px 0}
+#commentform{margin-left:3px;color:#000;font-size:12px;width:90%}
+#commentform a,#commentform small{color:#000}
+#commentform input{background:#f2f8fa;border:2px solid #f2f8fa;font-size:12px;padding:4px;color:#545454}
+#commentform textarea{background:#f2f8fa;border:2px solid #f2f8fa;font-size:12px;padding:4px;margin:5px 0 0 0;color:#545454}
+#commentform input#submit{background:0 0;border:0}
+.links ul{width:728px;clear:both;margin:30px 0 0 0}
+.links li{float:left;width:100px;font-size:12px;padding:0}
+.links img{width:18px;height:18px}
+.oright{margin:0;padding:0}
+.oright li{display:block;float:left;height:100px;overflow:hidden;text-align:center;width:80px}
+.oright li div{font-size:14px;padding:3px 0 3px 0}
+#breadnav{margin:10px 25px}
+#dcount{display:none;height:0}
+.random{width:680px;}
+ins.adsbygoogle[data-ad-status="unfilled"]{display: none !important;}

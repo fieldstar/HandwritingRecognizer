@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>上传图片</title>
+    <script src="jquery_1.12.0.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>
+  
+</style>
+
+<div align="center">
+<p align='center' class="csearch">
+<form action="{{url_for('show')}}" method="post" enctype="multipart/form-data">
+   <strong class="bblue">请选择要上传的图片:</strong><br> <br>
+    <input type="file" id="model" name="image_name">
+    <input id="submit" type="submit">
+</form>
+</p>  
+</div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<style>
+
+a {
+    text-decoration: none;
+    display: inline-block;
+}
+
+a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+table {
+    font-family: arial, sans-serif;
+    font-size: 150%;
+    border-collapse: collapse;
+    width: 800px;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #fbf9f9;
+}
+</style>
+<body>
+<div align="center">
+<div class="cdiv">
+    <a href="/" style="padding: 8px 16px;"> 看图识字</a>
+    <a href="/input" style="padding: 8px 16px;"> 查书法</a>
+    <a onclick="goBack()" style="padding: 8px 16px;">返回</a>
+    <a onclick="goForward()" style="padding: 8px 16px;">继续</a>
+</div>
+
+<br>
+<div class="cdiv">
+<table align="center">
+    <tr align="center">
+        "{{writer}}"的书法
+    </tr>
+
+    <tr id="word_pic" align="center">        
+    </tr>
+</table>
+</div>
+</div>
+</body>
+<script>
+function goBack() {
+    window.history.back();
+}
+function goForward() {
+    window.history.forward();
+}
+
+
+    var word_img="";
+    // 自定义数组
+    var image_name_list =JSON.parse('{{name_list | tojson | safe}}');
+    var base_url =JSON.parse('{{base_url | tojson | safe}}');
+    /****普通for循环****/
+    for (let i = 0; i < image_name_list.length; i++) {
+        word_img += '<a href="'+base_url+image_name_list[i]+'" ><img src="'+base_url+image_name_list[i]+'" height="80" width="80" alt="'+image_name_list[i]+'"></a>';
+    };
+
+    
+
+    console.log(word_img);
+    document.getElementById("word_pic").innerHTML = word_img;
+
+
+</script>
+</html>

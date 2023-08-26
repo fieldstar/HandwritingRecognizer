@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>按字查图</title>
+    <script src="jquery_1.12.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css')}}">
+</head>
+<style>
+
+a {
+    text-decoration: none;
+    display: inline-block;
+}
+
+a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+
+</style>
+<body>
+<div align="center">
+<div>
+    <a onclick="goBack()">返回</a>
+    <a onclick="goForward()">继续</a>
+</div>
+<br>
+
+<div class="cdiv" align="center">
+    <form action="{{ url_for('word_list')}}" method="post">
+    <p class="csearch">请输入要查询汉字（1个）：<input type="text" size="20" name="word" class="cinput" onkeyup="value=value.replace(/[ -~]/g,'')" on-keydown="if(event.keyCode==13)event.keyCode=9">
+    <input type="image" src="{{ url_for('static',filename='images/search.gif')}}">
+    </p>
+    </form>
+</div>
+<div class="cdiv" align="left">
+    <p>　　本站共收集了8985个汉字的18万多张书法作品，主要包括五种书法字体，分别为：楷书体（包含魏碑、正楷），行书体（包含行楷、行草），草书体（包含章草、小草、大草、标准草书），隶书体（包含古隶、今隶），篆书体（包含大篆、小篆）。</p>
+    <p>　　本站对这些书法作品构建了深度学习模型，并进行了模型训练，具有一定的识别准确度</p>
+    <p>　　在此您可以查询每个字的书法作品，也可通过上传书法图片，按图查字。</p>
+</div>
+</div>
+</body>
+<script>
+function goBack() {
+    window.history.back();
+}
+function goForward() {
+    window.history.forward();
+}
+
+</script>
+
+
+
+
+</html>
