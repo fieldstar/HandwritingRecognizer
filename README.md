@@ -1,4 +1,4 @@
-## HandwritingRecognizer
+## HandwritingRecognizer 手写体汉字识别
 ## Author: ZENG Xiaoqing <zengxq@csust.edu.cn>
 
 ### 手写体汉字识别在以下领域具有重要的现实意义：
