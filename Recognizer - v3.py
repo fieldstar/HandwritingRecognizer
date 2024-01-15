@@ -3,7 +3,7 @@
 
 """
 @author: 曾小青<zengxq@csust.edu.cn>
-@date: 2024/01/15
+@date: 2023/08/24
 """
 import pandas as pd
 import random
@@ -15,6 +15,7 @@ import os
 import pathlib
 from pathlib import Path
 from typing import Tuple, Dict, List
+
 import torch
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
@@ -23,6 +24,7 @@ from torch.utils.data import RandomSampler
 import torchvision
 from torchvision import transforms
 from torchvision import datasets
+from torchinfo import summary
 
 from tqdm import tqdm
 from timeit import default_timer as timer 
@@ -35,19 +37,19 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # 设置数据文件夹
 DATA_PATH = Path("data/")
 IMAGE_PATH = DATA_PATH / "wordlib"    #
-# IMAGE_PATH_LIST = list(IMAGE_PATH.glob("*.gif"))  
+IMAGE_PATH_LIST = list(IMAGE_PATH.glob("*.gif"))  
 
 # 如果文件夹不存在，则创建一个... 
 if IMAGE_PATH.is_dir():
-    print(f"{IMAGE_PATH} 字体图片文件夹存在，可以使用...")
+    print(f"{IMAGE_PATH} 文件夹存在，可以使用...")
 else:
-    print(f"{IMAGE_PATH} 字体图片文件平不存在，创建中...")
+    print(f"{IMAGE_PATH}文件平不存在，创建中...")
     IMAGE_PATH.mkdir(parents=True, exist_ok=True)
 
 # ### 准备数据，查找指定文件夹中包含哪些文字，并设置其classes和labels
 
 # 查找指定文件夹中的classes
-def find_classes(directory: str,ext:str='gif',scan_images=False) -> Tuple[List[str], Dict[str, int],List[str]]:
+def find_classes(directory: str,ext:str='gif') -> Tuple[List[str], Dict[str, int],List[str]]:
     """根据指定文件夹下的图片文件名的第一名字形成类别classes.
     
     书法图片文件命名规范为：字_字体_书法家_文件编号.gif，如：予_行书_鲜于枢_12046.gif.
@@ -62,57 +64,33 @@ def find_classes(directory: str,ext:str='gif',scan_images=False) -> Tuple[List[s
         data\wordlib\予_行书_鲜于枢_12046.gif 分割_前面的字符是书法对应的文字
         >>> (["予", "大",...], {"予": 203, ...})
     """
+    # 1. 扫描路径下全部文件，通过文件名首字符为图片所对应的汉字这样的命名规则，得到该路径下的全部汉字。
+    image_path_list = list(pathlib.Path(directory).glob(f"*.{ext}"))
     image_classes_set = set()  #因为相同的字有多张图，所以使用set集合去重
     images_classes_list=[]
     images_name_list=[]
-    # 创建汉字列表及包含其序号的dict
+    for  path in   image_path_list:
+        image_classes_set.add(path.name.split('_')[0])
+        images_name_list.append(path.name)
+    classes=sorted([word for word in image_classes_set])
+    
+    # 2. 如果文件不存在或没有按要求命名，则报错
+    if not classes:
+        raise FileNotFoundError(f"{directory}路径下的文件可能不存在或没有按要求命名（文件命名规则为word_font_writer_number.gif)")
+        
+    # 3. 创建汉字列表及包含其序号的dict
     class_to_idx=dict()
-
-    if scan_images:
-
-        # 1. 扫描路径下全部文件，通过文件名首字符为图片所对应的汉字这样的命名规则，得到该路径下的全部汉字。
-        image_path_list = list(pathlib.Path(directory).glob(f"*.{ext}"))
-
-        for  path in   image_path_list:
-            image_classes_set.add(path.name.split('_')[0])
-            images_name_list.append(path.name)
-        classes=sorted([word for word in image_classes_set])
-        
-        # 2. 如果文件不存在或没有按要求命名，则报错
-        if not classes:
-            raise FileNotFoundError(f"{directory}路径下的文件可能不存在或没有按要求命名（文件命名规则为word_font_writer_number.gif)")
-   
-        for i,word in enumerate(classes):
-            class_to_idx[word]=i   
-        
-        # 3. 将图片文件扫描及解析的结果保存到csv文件
-        df_classes=pd.DataFrame(classes,columns=['classes'])
-        df_class_to_idx=pd.DataFrame(list(class_to_idx.items()),columns=['classes','idx'])
-        df_class_to_idx=df_class_to_idx.set_index('classes')
-        df_images_name_list=pd.DataFrame(images_name_list,columns=['images'])
-        df_classes.to_csv('data/bd_classes.csv',header=True,index=False)
-        df_class_to_idx.to_csv('data/bd_class_to_idx.csv',header=True)
-        df_images_name_list.to_csv('data/bd_images_names.csv',header=True,index=False)
-    else:
-        df_classes=pd.read_csv('data/bd_classes.csv',header=0)
-        classes=list(df_classes['classes'])
-
-        df_class_to_idx=pd.read_csv('data/bd_class_to_idx.csv',header=0)
-        class_to_idx=dict(zip(df_class_to_idx['classes'],df_class_to_idx['idx']))
-
-        df_images_name_list=pd.read_csv('data/bd_images_names.csv',header=0)
-        images_name_list=list(df_images_name_list['images'])
+    for i,word in enumerate(classes):
+        class_to_idx[word]=i   
 
     return classes, class_to_idx, images_name_list
-
-
 
 
 ##  是模型训练的基础数据，重要，不要改动
 images_classes_list,word_classes_dict,images_name_list=find_classes(IMAGE_PATH,'gif') 
 
 # 查找指定文件夹中的writer_classes
-def find_writer_classes(directory: str,ext:str='gif',scan_images=False) -> Tuple[List[str], Dict[str, int],List[str]]:
+def find_writer_classes(directory: str,ext:str='gif') -> Tuple[List[str], Dict[str, int],List[str]]:
     """根据指定文件夹下的图片文件名的第一名字形成类别classes.
     
     书法图片文件命名规范为：字_字体_书法家_文件编号.gif，如：予_行书_鲜于枢_12046.gif.
@@ -128,61 +106,48 @@ def find_writer_classes(directory: str,ext:str='gif',scan_images=False) -> Tuple
         >>> (["鲜于枢", "王羲之"], {"王羲之": 266, ...})
     """
     # 1. 扫描路径下全部文件，通过文件名首字符为图片所对应的汉字这样的命名规则，得到该路径下的全部汉字。
-    
+    image_path_list = list(pathlib.Path(directory).glob(f"*.{ext}"))
     image_writer_classes_set = set()  #因为相同的字有多张图，所以使用set集合去重
     images_writer_classes_list=[]
     images_writer_name_list=[]
+    for  path in   image_path_list:
+        image_writer_classes_set.add(path.name.split('_')[2])
+        images_writer_name_list.append(path.name)
+    writer_classes=sorted([word for word in image_writer_classes_set])
+    
+    # 2. 如果文件不存在或没有按要求命名，则报错
+    if not writer_classes:
+        raise FileNotFoundError(f"{directory}路径下的文件可能不存在或没有按要求命名（文件命名规则为word_font_writer_number.gif)")
+        
+    # 3. 创建汉字列表及包含其序号的dict
     writer_class_to_idx=dict()
-
-    if scan_images:
-        # 1. 扫描路径下全部文件，通过文件名首字符为图片所对应的汉字这样的命名规则，得到该路径下的全部汉字。
-        image_path_list = list(pathlib.Path(directory).glob(f"*.{ext}"))
-        
-        for  path in   image_path_list:
-            image_writer_classes_set.add(path.name.split('_')[2])
-            images_writer_name_list.append(path.name)
-
-        writer_classes=sorted([word for word in image_writer_classes_set])
-
-        # 2. 如果文件不存在或没有按要求命名，则报错
-        if not writer_classes:
-            raise FileNotFoundError(f"{directory}路径下的文件可能不存在或没有按要求命名（文件命名规则为word_font_writer_number.gif)")
-
-        # 3. 创建汉字列表及包含其序号的dict
-
-        for i,word in enumerate(writer_classes):
-            writer_class_to_idx[word]=i   
-        
-        # 3. 将图片文件扫描及解析的结果保存到csv文件
-        df_writer_classes=pd.DataFrame(writer_classes,columns=['writer_classes'])
-        df_writer_class_to_idx=pd.DataFrame(list(writer_class_to_idx.items()),columns=['writer_classes','idx'])
-        df_writer_class_to_idx=df_writer_class_to_idx.set_index('writer_classes')
-        df_images_writer_name_list=pd.DataFrame(images_writer_name_list,columns=['images'])
-        df_writer_classes.to_csv('data/bd_writer_classes.csv',header=True,index=False)
-        df_writer_class_to_idx.to_csv('data/bd_writer_class_to_idx.csv',header=True)
-        df_images_writer_name_list.to_csv('data/bd_images_writer_name.csv',header=True,index=False)
-    else:
-        df_writer_classes=pd.read_csv('data/bd_writer_classes.csv',header=0)
-        writer_classes=list(df_writer_classes['writer_classes'])
-
-        df_writer_class_to_idx=pd.read_csv('data/bd_writer_class_to_idx.csv',header=0)
-        writer_class_to_idx=dict(zip(df_writer_class_to_idx['writer_classes'],df_writer_class_to_idx['idx']))
-
-        df_images_writer_name_list=pd.read_csv('data/bd_images_writer_name.csv',header=0)
-        images_writer_name_list=list(df_images_writer_name_list['images']) 
-
+    for i,word in enumerate(writer_classes):
+        writer_class_to_idx[word]=i   
 
     return writer_classes, writer_class_to_idx, images_writer_name_list
 
 ##  是模型训练的基础数据，重要，不要改动
 images_writer_classes_list,word_writer_classes_dict,images_writer_name_list=find_writer_classes(IMAGE_PATH,'gif') 
 
+# ### 根据指定文件夹下的图片，生成文字列表，并以Dict保存每个文字的编号
+
+#以DataFrame形式保存字与Label的对应关系
+df_word_label_map=pd.DataFrame.from_dict(word_classes_dict,orient='index',columns=['label'])
+df_word_label_map.reset_index(inplace=True)
+df_word_label_map.columns=['word','label']
+#df_word_label_map.T
+
+#以DataFrame形式保存字与Label的对应关系
+df_word_writer_label_map=pd.DataFrame.from_dict(word_writer_classes_dict,orient='index',columns=['label'])
+df_word_writer_label_map.reset_index(inplace=True)
+df_word_writer_label_map.columns=['word','label']
+#df_word_writer_label_map.T
 
 # 根据汉字查找对应的文件名
 def get_images_path_by_word(word:str,image_path_list=None):
     word_images_path=[]
     if image_path_list is None:
-        image_path_list=list(IMAGE_PATH.glob("*.gif")) 
+        image_path_list=IMAGE_PATH_LIST
 
     for image_name in image_path_list:
         file_name=str(image_name).split('\\')[-1]
@@ -196,7 +161,7 @@ def get_images_path_by_word(word:str,image_path_list=None):
 def get_images_path_by_writer(writer:str,image_path_list=None):
     writer_images_path=[]
     if image_path_list is None:
-        image_path_list=list(IMAGE_PATH.glob("*.gif")) 
+        image_path_list=IMAGE_PATH_LIST
 
     for image_name in image_path_list:
         file_name=str(image_name).split('\\')[-1]
@@ -236,8 +201,8 @@ def resolve_word_by_image_name(image_path,word_classes_dict,show=True)->(str,str
             plt.axis(False)            
     return image_class,image_label,f
 
-# random_image_path = random.choice(list(IMAGE_PATH.glob("*.gif")) )
-# word,label,img=resolve_word_by_image_name(random_image_path,word_classes_dict,show=False)
+random_image_path = random.choice(IMAGE_PATH_LIST)
+word,label,img=resolve_word_by_image_name(random_image_path,word_classes_dict,show=False)
 
 # ### 创建图片转换Transform，将图片按某种效果进行变换
 # 详见[Pytorch文档: ILLUSTRATION OF TRANSFORMS](https://pytorch.org/vision/stable/auto_examples/plot_transforms.html#sphx-glr-auto-examples-plot-transforms-py)
@@ -272,8 +237,8 @@ def resolve_word_writer_by_image_name(image_path,word_writer_classes_dict,show=T
     return image_writer_class,image_writer_label,f
 
 
-# random_image_path = random.choice(list(IMAGE_PATH.glob("*.gif")) )
-# word_writer,writer_label,img=resolve_word_writer_by_image_name(random_image_path,word_writer_classes_dict,show=False)
+random_image_path = random.choice(IMAGE_PATH_LIST)
+word_writer,writer_label,img=resolve_word_writer_by_image_name(random_image_path,word_writer_classes_dict,show=False)
 
 # 定义 transform
 # 转换效果及使用方法详见：https://pytorch.org/vision/stable/auto_examples/plot_transforms.html#sphx-glr-auto-examples-plot-transforms-py
@@ -382,7 +347,7 @@ def generate_augmented_images(k=2,size=4,image_path_list=None,aug_transform=None
     Args:
         k=2:循环生成的次数
         size=4：每次取样的大小
-        image_path_list=list(IMAGE_PATH.glob("*.gif")) ：图片来源文件夹
+        image_path_list=IMAGE_PATH_LIST：图片来源文件夹
         aug_transform=None：转换器
         save=True：是否保存到文件夹
         show=False：是否显示生成的图片
@@ -394,7 +359,7 @@ def generate_augmented_images(k=2,size=4,image_path_list=None,aug_transform=None
                             transform=aug_transform, 
                             n=size,save=True,show=False,save_path='data/augmented/')
 
-# generate_augmented_images(10,10,image_path_list=list(IMAGE_PATH.glob("*.gif")) ,aug_transform=aug_transform) #从已有的图片中增广生成100张图片
+# generate_augmented_images(10,10,image_path_list=IMAGE_PATH_LIST,aug_transform=aug_transform) #从已有的图片中增广生成100张图片
 
 # ### 自定义继承自torch.utils.data.Dataset的数据集
 
@@ -514,7 +479,9 @@ test_writer_size=len(data_writer_custom)-train_writer_size
 torch.manual_seed(42)
 train_writer_dataset,test_writer_dataset=torch.utils.data.random_split(data_writer_custom,[train_writer_size,test_writer_size])
 
+# ###  创建随机显示图片的函数
 
+# In[27]:
 
 
 # 1. 输入参数为dataset、文字列表
@@ -591,12 +558,12 @@ test_writer_dataloader = DataLoader(dataset=test_writer_dataset, # 使用自定�
                                     shuffle=False) # 不须乱序加载
 
 
-# img, label = next(iter(train_dataloader))
+img, label = next(iter(train_dataloader))
 # next一次加载一批
 # print(f"Image shape: {img.shape} -> [batch_size, color_channels, height, width]")
 # print(f"Label shape: {label.shape}")
 
-# img_writer, label_writer = next(iter(train_writer_dataloader))
+img_writer, label_writer = next(iter(train_writer_dataloader))
 # next一次加载一批
 # print(f"img_writer shape: {img.shape} -> [batch_size, color_channels, height, width]")
 # print(f"label_writer shape: {label.shape}")
@@ -794,6 +761,18 @@ model_resnet = WordRecognizeResnet(images_classes_list).to(device)
 writer_model_resnet = WordRecognizeResnet(images_writer_classes_list).to(device)
 
 
+# 1. 从test_dataloader中抽取一批数据用于显示
+itr=iter(test_dataloader)
+img_batch, label_batch= next(itr)
+
+# 1. 从test_dataloader中抽取一批数据用于显示
+writer_itr=iter(test_writer_dataloader)
+img_writer_batch, label_writer_batch= next(writer_itr)
+
+
+
+
+
 
 def plot_from_image_tensor(img_tensor):
     """
@@ -827,7 +806,8 @@ def result_compare(iterator,model):
             pred_compare.reset_index(inplace=True)
             pred_compare.columns=['实际汉字','识别结果']
     return pred_compare
-
+result=result_compare(itr,model_0)
+#result.T
 
 def writer_result_compare(iterator,model):
     model.eval()
@@ -851,7 +831,8 @@ def writer_result_compare(iterator,model):
             pred_compare.reset_index(inplace=True)
             pred_compare.columns=['书写人','识别结果']
     return pred_compare
-
+writer_result=writer_result_compare(writer_itr,writer_model_0)
+# writer_result.T
 # ### 使用`torchinfo`来获得模型信息
 # torchinfo这个包可以比较方便地显示模型结构和参数，如果import失败，需要安装
 try: 
@@ -859,6 +840,12 @@ try:
 except:
     print('Please install torchinfo to proceed1')
     
+    
+from torchinfo import summary
+summary(model_0, input_size=img_batch.shape) # summary函数非常方便，只需要把一个batch的shape作为输入就能够得模型信息，不须加载真实数据summary(writer_model_0, input_size=img_writer_batch.shape) # summary函数非常方便，只需要把一个batch的shape作为输入就能够得模型信息，不须加载真实数据
+
+summary(model_resnet, input_size=img_batch.shape)
+summary(writer_model_resnet, input_size=img_writer_batch.shape)
 
 # ###  创建train_step和test_step函数
 # 主要定义了三个函数:
@@ -1195,6 +1182,13 @@ def plot_loss_curves(results: Dict[str, List[float]]):
     plt.xlabel('Epochs-训练轮次', fontsize=16,fontproperties='Simhei')
     plt.legend();
 
+# result=result_compare(itr,model_0)
+# result.T
+# plot_loss_curves(model_0_results) 
+
+# writer_result=writer_result_compare(writer_itr,writer_model_0)
+# writer_result.T
+# plot_loss_curves(writer_model_0_results) 
 
 # ###  保存和加载训练好的模型
 
@@ -1268,7 +1262,16 @@ loaded_writer_model_0_resnet.load_state_dict(torch.load(f=MODEL_WRITER_SAVE_PATH
 # 将模型发送到相应的device
 loaded_writer_model_0_resnet = loaded_writer_model_0_resnet.to(device)
 
-print('模型成功加载！')
+# ### 使用预训练模型作预测
+result=result_compare(itr,loaded_model_0)
+# result.T
+writer_result=writer_result_compare(writer_itr,loaded_writer_model_0)
+# writer_result.T
+result_resnet=result_compare(itr,loaded_model_0_resnet)
+# result_resnet.T
+writer_result_resnet=writer_result_compare(writer_itr,loaded_writer_model_0_resnet)
+# writer_result_resnet.T
+
 def get_image_by_file_name(image_path,show=True)->(str,str,Image):
     
     '''
